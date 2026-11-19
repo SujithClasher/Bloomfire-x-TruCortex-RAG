@@ -1,0 +1,68 @@
+# ─── GGUF / LLM Models (too large for GitHub) ───────────────────────────────
+*.gguf
+*.ggml
+*.bin
+backend/models/
+models/
+
+# ─── Python ──────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pycache
+.Python
+env/
+venv/
+.venv/
+ENV/
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# ─── ChromaDB / Vector DB (auto-rebuilt on startup) ─────────────────────────
+backend/chroma_storage/
+chroma_storage/
+
+# ─── SQLite Database (auto-created on startup) ───────────────────────────────
+backend/app.db
+*.db
+*.sqlite
+*.sqlite3
+
+# ─── Node / Frontend ─────────────────────────────────────────────────────────
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.quasar/
+frontend/.vite/
+dist/
+.cache/
+.parcel-cache/
+
+# ─── Environment & Secrets ───────────────────────────────────────────────────
+.env
+.env.*
+*.env
+secrets.json
+config.local.*
+
+# ─── OS / Editor ─────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/settings.json
+*.code-workspace
+
+# ─── Logs ────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ─── Temporary / scratch files ───────────────────────────────────────────────
+*.tmp
+*.temp
+~$*
