@@ -6,7 +6,7 @@
         <!-- Left: Logo + Title -->
         <div class="row items-center no-wrap cursor-pointer" @click="leftDrawerOpen = !leftDrawerOpen">
           <img src="/icon.png" alt="TruCortex Logo" class="nav-logo q-mr-sm" />
-          <span class="apple-brand-title">CIBIL</span>
+          <img src="/logo.svg" alt="TransUnion CIBIL" class="cibil-nav-logo" />
           <span class="apple-brand-separator q-mx-xs">/</span>
           <span class="apple-brand-sub">TruCortex x Bloomfire KMP</span>
           <q-tooltip class="bg-black text-caption">Toggle Knowledge Explorer</q-tooltip>
@@ -211,6 +211,19 @@ function handleUploadClick() {
   object-fit: contain;
   border-radius: 6px;
   filter: drop-shadow(0 0 6px rgba(99, 179, 237, 0.5));
+}
+
+.cibil-nav-logo {
+  height: 22px;
+  width: auto;
+  object-fit: contain;
+  vertical-align: middle;
+  filter: drop-shadow(0 0 6px rgba(0, 166, 202, 0.4));
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.cibil-nav-logo:hover {
+  transform: scale(1.02);
 }
 
 .apple-brand-title {
