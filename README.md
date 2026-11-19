@@ -11,7 +11,7 @@ A production-grade, local enterprise RAG platform for **TransUnion CIBIL Intelli
 │               Vue 3 + Quasar Frontend (Port 5173)                      │
 │   ┌──────────────────────┬──────────────────────┬──────────────────┐   │
 │   │  Repository Explorer │  RAG Chat & Trace    │  Conflict Radar  │   │
-│   │  (RBAC Lock Icons)   │  (Claude Avatar &    │  & Audit Log     │   │
+│   │  (RBAC Lock Icons)   │  (                   │  & Audit Log     │   │
 │   │                      │   Clickable Citations│                  │   │
 │   └──────────────────────┴──────────────────────┴──────────────────┘   │
 └───────────────────────────────────┬────────────────────────────────────┘
