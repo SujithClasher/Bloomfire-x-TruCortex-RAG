@@ -75,9 +75,9 @@ def _run_llm_inference(llm, query: str, results: List[Dict[str, Any]]) -> Option
     ]
 
     try:
-        # Build context from top 4 chunks (wider context = better compound answers)
+        # Build context from top 5 chunks (wider context = better compound answers)
         context_blocks = []
-        for idx, r in enumerate(results[:4], 1):
+        for idx, r in enumerate(results[:5], 1):
             meta = r.get("metadata", {})
             fname = meta.get("file_name", "Enterprise Document")
             loc = meta.get("page_or_slide", "")
@@ -95,22 +95,23 @@ def _run_llm_inference(llm, query: str, results: List[Dict[str, Any]]) -> Option
         p_loc = p_meta.get("page_or_slide", "")
 
         system_msg = (
-            "You are TruCortex × Bloomfire KMP Intelligence, an expert AI assistant for TransUnion CIBIL. "
-            "You answer with the precision and clarity of Claude.\n\n"
-            "RULES:\n"
-            "1. Start immediately with a direct 1-2 sentence answer — no filler like 'Based on the documents...'.\n"
-            "2. Use concise bullet points with **bold lead-ins** for multi-step processes or comparisons.\n"
-            "3. Include specific numbers: score ranges, SLAs, pricing tiers, API versions, CMR ranks.\n"
-            "4. Cite the source inline after each fact: [File Name • Section].\n"
-            "5. ALWAYS answer using the provided context — it contains relevant information. Extract and explain it clearly.\n"
-            "6. Do NOT say 'I don't see that' — the context HAS the answer; find and present it.\n"
-            "7. Do NOT suggest other documents. Do NOT repeat the question."
+            "You are TruCortex Enterprise Intelligence, an expert AI assistant. "
+            "You MUST answer every question using the context provided below. "
+            "The context ALWAYS contains the answer — your job is to find it and explain it clearly.\n\n"
+            "FORMAT RULES:\n"
+            "1. Start with a direct 1-2 sentence answer immediately.\n"
+            "2. Use bullet points with **bold lead-ins** for details.\n"
+            "3. Include specific numbers: score ranges, ranks, SLAs, versions.\n"
+            "4. Cite sources inline: [File Name • Section].\n"
+            "5. NEVER say 'I don't see that', 'not found', 'no information', or 'cannot answer'.\n"
+            "6. NEVER suggest looking at other documents.\n"
+            "7. NEVER repeat the question back."
         )
 
         user_msg = (
-            f"Enterprise Repository Context (use ALL of this to answer):\n{context}\n\n"
-            f"Question: {query}\n\n"
-            f"Answer directly and completely using the context above:"
+            f"CONTEXT (contains the answer — use it):\n{context}\n\n"
+            f"QUESTION: {query}\n\n"
+            f"Provide a complete answer using ONLY the context above. Begin now:"
         )
 
         t0 = time.perf_counter()
@@ -118,8 +119,8 @@ def _run_llm_inference(llm, query: str, results: List[Dict[str, Any]]) -> Option
             f"<|im_start|>system\n{system_msg}<|im_end|>\n"
             f"<|im_start|>user\n{user_msg}<|im_end|>\n"
             f"<|im_start|>assistant\n",
-            max_tokens=480,
-            temperature=0.1,
+            max_tokens=600,
+            temperature=0.15,
             top_p=0.92,
             repeat_penalty=1.06,
             stop=["<|im_end|>", "<|im_start|>", "\n\nUser:", "\n\nQuestion:"],

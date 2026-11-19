@@ -67,7 +67,7 @@
               <div class="row items-center q-gutter-x-xs">
                 <span
                   class="editorial-dot"
-                  :class="msg.piiBlocked || msg.rbacBlocked ? 'dot-crimson' : (isOperationsSop(msg.content) ? 'dot-amber' : 'dot-emerald')"
+                  :class="msg.piiBlocked || msg.rbacBlocked ? 'dot-crimson' : 'dot-emerald'"
                 ></span>
                 <span class="editorial-label text-weight-medium">
                   {{ getAssistantLabel(msg) }}
@@ -137,7 +137,7 @@
           </div>
         </div>
 
-        <!-- Thinking / Ingestion Pulse State (also with logo avatar) -->
+        <!-- Claude-Style Thinking Indicator -->
         <div v-if="chatStore.isLoading" class="assistant-response-container q-mb-xl">
           <div class="row items-center no-wrap q-gutter-x-sm q-mb-sm">
             <div class="ai-avatar-bubble ai-avatar-pulse">
@@ -145,16 +145,19 @@
             </div>
             <div class="row items-center q-gutter-x-xs">
               <span class="editorial-dot dot-emerald pulse-dot"></span>
-              <span class="editorial-label text-weight-medium">TruCortex Intelligence</span>
+              <span class="editorial-label text-weight-medium">TruCortex x Bloomfire</span>
             </div>
           </div>
-          <div class="row items-center q-gutter-x-sm text-secondary q-mt-sm" style="font-size: 14px;">
-            <div class="apple-thinking-dots row items-center q-gutter-x-xs">
-              <span class="dot-bounce d-1"></span>
-              <span class="dot-bounce d-2"></span>
-              <span class="dot-bounce d-3"></span>
+
+          <!-- Minimal Claude-style thinking text -->
+          <div class="claude-thinking-block q-mt-xs">
+            <div class="claude-thinking-line">
+              <span class="claude-thinking-icon">
+                <span class="thinking-sparkle"></span>
+              </span>
+              <span class="claude-thinking-text">{{ currentThinkingStep.text }}</span>
+              <span class="claude-thinking-cursor"></span>
             </div>
-            <span>Synthesizing authorized repositories...</span>
           </div>
         </div>
       </div>
@@ -204,7 +207,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, watch } from 'vue'
+import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
 import { useChatStore, Message } from '../stores/chat'
 import { useAuthStore } from '../stores/auth'
 import { useViewerStore } from '../stores/viewer'
@@ -222,6 +225,53 @@ const viewerStore = useViewerStore()
 const inputQuery = ref('')
 const scrollContainer = ref<HTMLElement | null>(null)
 const ratedMap = ref<Record<string, 'up' | 'down'>>({})
+
+// ── Dynamic Progressive Thinking Analysis ──────────────────────────────────
+const elapsedSeconds = ref(0)
+let thinkingTimer: any = null
+
+const currentThinkingStep = computed(() => {
+  const sec = elapsedSeconds.value
+  const dept = authStore.currentUser.department || 'Product'
+
+  // Claude-style rotating analysis text — clean, minimal, professional
+  const steps = [
+    { at: 0,    text: `Searching ${dept} repositories...` },
+    { at: 2.0,  text: 'Reading relevant documents...' },
+    { at: 5.0,  text: 'Analyzing context and extracting key details...' },
+    { at: 10.0, text: 'Reasoning through enterprise knowledge base...' },
+    { at: 16.0, text: 'Synthesizing grounded response...' },
+    { at: 24.0, text: 'Finalizing citations and structured output...' },
+  ]
+
+  let current = steps[0]
+  for (const s of steps) {
+    if (sec >= s.at) current = s
+  }
+  return current
+})
+
+watch(() => chatStore.isLoading, (loading) => {
+  if (loading) {
+    elapsedSeconds.value = 0
+    if (thinkingTimer) clearInterval(thinkingTimer)
+    thinkingTimer = setInterval(() => {
+      elapsedSeconds.value = +(elapsedSeconds.value + 0.1).toFixed(1)
+    }, 100)
+  } else {
+    if (thinkingTimer) {
+      clearInterval(thinkingTimer)
+      thinkingTimer = null
+    }
+  }
+}, { immediate: true })
+
+onUnmounted(() => {
+  if (thinkingTimer) {
+    clearInterval(thinkingTimer)
+    thinkingTimer = null
+  }
+})
 
 // Filter out initial welcome placeholder if user starts fresh conversation
 const displayMessages = computed(() => {
@@ -384,8 +434,7 @@ function hasPiiMask(content: string): boolean {
 function getAssistantLabel(msg: Message): string {
   if (msg.piiBlocked) return 'Identity GuardLLM'
   if (msg.rbacBlocked) return 'Kernel RBAC Policy'
-  if (isOperationsSop(msg.content)) return 'Operations SOP'
-  return 'Enterprise Intelligence'
+  return 'TruCortex x Bloomfire'
 }
 
 function cleanErrorMessage(content: string): string {
@@ -952,5 +1001,83 @@ function renderMarkdown(text: string): string {
   height: 48px;
   object-fit: contain;
   filter: drop-shadow(0 0 8px rgba(99, 179, 237, 0.4));
+}
+
+/* ─── Claude-Style Thinking Indicator ─────────────────────────────────────── */
+.claude-thinking-block {
+  padding-left: 2px;
+  animation: think-appear 0.3s ease-out;
+}
+
+@keyframes think-appear {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.claude-thinking-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px 8px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 20px;
+  max-width: 420px;
+}
+
+.claude-thinking-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.thinking-sparkle {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(10, 132, 255, 0.0),
+    rgba(10, 132, 255, 0.6),
+    rgba(100, 210, 255, 0.6),
+    rgba(48, 209, 88, 0.4),
+    rgba(10, 132, 255, 0.0)
+  );
+  animation: sparkle-spin 1.8s linear infinite;
+}
+
+@keyframes sparkle-spin {
+  to { transform: rotate(360deg); }
+}
+
+.claude-thinking-text {
+  font-size: 13.5px;
+  color: #A1A1A6;
+  letter-spacing: -0.01em;
+  animation: text-shimmer 2.5s ease-in-out infinite;
+}
+
+@keyframes text-shimmer {
+  0%, 100% { opacity: 0.65; }
+  50% { opacity: 1; }
+}
+
+.claude-thinking-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 15px;
+  background: #A1A1A6;
+  border-radius: 1px;
+  animation: cursor-blink 1s step-end infinite;
+  flex-shrink: 0;
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 </style>

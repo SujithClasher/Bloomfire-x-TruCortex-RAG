@@ -38,6 +38,8 @@ frontend/node_modules/
 frontend/dist/
 frontend/.quasar/
 frontend/.vite/
+frontend/src/**/*.js
+frontend/src/**/*.js.map
 dist/
 .cache/
 .parcel-cache/
