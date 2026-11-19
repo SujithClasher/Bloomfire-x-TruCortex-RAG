@@ -7,7 +7,7 @@
         <div class="row items-center no-wrap cursor-pointer" @click="leftDrawerOpen = !leftDrawerOpen">
           <img src="/icon.png" alt="TruCortex Logo" class="nav-logo q-mr-sm" />
           <img src="/logo.svg" alt="TransUnion CIBIL" class="cibil-nav-logo" />
-          <span class="apple-brand-separator q-mx-xs">/</span>
+          <span class="apple-brand-separator q-mx-sm">/</span>
           <span class="apple-brand-sub">TruCortex x Bloomfire KMP</span>
           <q-tooltip class="bg-black text-caption">Toggle Knowledge Explorer</q-tooltip>
         </div>
@@ -214,11 +214,13 @@ function handleUploadClick() {
 }
 
 .cibil-nav-logo {
-  height: 22px;
+  height: 28px;
   width: auto;
+  max-width: 150px;
   object-fit: contain;
+  display: inline-block;
   vertical-align: middle;
-  filter: drop-shadow(0 0 6px rgba(0, 166, 202, 0.4));
+  filter: drop-shadow(0 0 6px rgba(0, 166, 202, 0.45));
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
@@ -234,15 +236,22 @@ function handleUploadClick() {
 }
 
 .apple-brand-separator {
-  color: rgba(255, 255, 255, 0.25);
-  font-size: 13px;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 15px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  user-select: none;
 }
 
 .apple-brand-sub {
   font-size: 14px;
   font-weight: 500;
-  letter-spacing: -0.02em;
-  color: #8E8E93;
+  letter-spacing: -0.015em;
+  color: #D1D1D6;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
 }
 
 .apple-status-dot {
